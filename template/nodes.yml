@@ -1,0 +1,6 @@
+# {{ instance_name }}
+
+{% for node in nodes %}
+    {%- include 'node.yml' %}{% if loop.index < nodes|length %}
+
+{% endif %}{% endfor %}

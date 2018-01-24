@@ -1,0 +1,14 @@
+tmp
+/save
+*.py?
+__pycache__
+*.egg-info
+/build
+/dist
+*.py?
+.*.sw?
+.sw?
+.DS_Store
+lastfailed
+*.egg-info
+tmp

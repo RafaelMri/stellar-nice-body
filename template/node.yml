@@ -1,0 +1,23 @@
+{{ node.name }}:
+    image: stellar-core:latest
+    hostname: {{ node.hostname }}
+    container_name: stellar-core-{{ node.hostname }}
+    restart: "{{ node.restart }}"
+    net: host
+    log_opt:
+        max-size: 50m
+    volumes:
+        - /opt/bos/etc/resolv.conf:/etc/resolv.conf:ro
+        - {{ node.base_path }}:/node
+        - /opt/bos/etc/aws:/root/.aws
+        - /opt/bos/etc/hosts:/etc/hosts
+        - /opt/bos/etc/config/{{ node.name }}.cfg:/config.cfg
+    ports:
+        - "{{ node.http_port }}:11626"
+        - "{{ node.peer_port }}:11625"
+    environment:
+        # Secret seed: {{ node.secret_seed }}
+        #      Public: {{ node.public_address }}
+        FORCESCP: "{% if node.force_scp %}true{% else %}false{% endif %}"
+        NEW_NETWORK: "{% if node.new_network %}true{% else %}false{% endif %}"
+        HISTORY: "{{ node.default_history.name }}"

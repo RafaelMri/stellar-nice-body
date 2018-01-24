@@ -1,0 +1,164 @@
+network:
+    passphrase: 'Test SDF Network ; September 2015'
+    base_safety: 0.7
+
+# `instances` is the collection of docker host.
+regions:
+    region0:
+        instances:
+            - server0
+            - server1
+        tags:
+            - 0
+            - 1
+    region1:
+        instances:
+            - server2
+            - server3
+        tags:
+            - 0
+            - 1
+instances:
+    server0:
+        # ip will produce the `/etc/hosts` file, so basically each node will find the others thru hosts file.
+        internal_ip: 172.31.0.2
+        public_ip: 192.168.99.100
+
+        # `tags` will be used to calculate the distince betwen servers.
+        tags:
+            - aws
+            - ap
+            - northeast
+            - 2
+            - 172
+            - 31
+            - 8
+        # this instance will launch these `nodes`.
+        nodes:
+            - n0
+            - n1
+            - n2
+            - n3
+    server1:
+        internal_ip: 172.31.0.3
+        public_ip: 192.168.99.101
+        tags:
+            - aws
+            - ap
+            - northeast
+            - 2
+            - 172
+            - 31
+            - 15
+        nodes:
+            - n4
+            - n5
+            - n6
+            - n7
+
+    server2:
+        internal_ip: 172.31.0.4
+        public_ip: 192.168.99.102
+        tags:
+            - aws
+            - ap
+            - northeast
+            - 2
+            - 172
+            - 31
+            - 4
+        nodes:
+            - n8
+            - n9
+            - n10
+            - n11
+
+    server3:
+        internal_ip: 172.31.0.5
+        public_ip: 192.168.99.103
+        tags:
+            - aws
+            - ap
+            - northeast
+            - 2
+            - 172
+            - 31
+            - 12
+        nodes:
+            - n12
+            - n13
+            - n14
+            - n15
+
+# `databases` is the collection of databases, these will be used for nodes.
+databases:
+    replicated:
+        engine: postgresql
+        host: postgresql-repliacated
+        port: 5430
+        user: dbuser
+        password: dbuser
+
+    default:
+        engine: postgresql
+        host: postgresql
+        port: 5432
+        user: dbuser
+        password: dbuser
+
+# `history` is the collection of histories, these will be used for nodes.
+history:
+    # `trusted` is the list of nodes, the history of these nodes will be shared to other nodes.
+    trusted:
+        - n1
+        - n4
+        - n10
+        - n12
+    # `backend` is the template of history. `getter` and `putter` will be rendered to fit the each nodes.
+    backends:
+        default:
+            getter: http://killme.s3-website.ap-northeast-2.amazonaws.com/dev/multi-quorum/{hostname}/{{0}} -O {{1}}
+            putter: aws s3 cp {{0}} s3://killme/local/intersection-with-observers/{hostname}/{{1}} --acl public-read --quiet'
+
+# `nodes` is the collection of nodes. If `secret_seed` is missing, nice-body can fill the missings.
+nodes:
+    n0:
+        # `secret_seed`. public address will be derived from this.
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+        # `is_validator=true` means this node will be validator in quorum, default is `true`
+        is_validator: true
+        # `database` set the database
+        database: replicated
+        # `history` set the history backend
+        history: default
+    n1:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n2:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n3:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n4:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n5:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n6:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n7:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n8:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n9:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n10:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n11:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n12:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n13:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n14:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+    n15:
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+        is_validator: false

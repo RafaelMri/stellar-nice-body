@@ -1,0 +1,158 @@
+#!/usr/bin/env python
+
+import argparse
+import datetime
+import glob
+import importlib
+import logging
+import pathlib
+import pprint  # noqa
+import sys
+import traceback  # noqa
+
+sys.path.insert(0, './src')
+
+from tnb.design import Design  # noqa
+from tnb import command  # noqa
+from tnb.util import (  # noqa
+    print_parser_error,
+)
+
+
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+)
+log = logging.getLogger(__name__)
+
+
+def load_commands():
+    commands = dict()
+
+    log.debug('trying to load commands')
+    for i in glob.glob(str(pathlib.Path(command.__file__).parent.joinpath('*.py'))):
+        p = pathlib.Path(i)
+        if p.name.startswith('_'):
+            continue
+
+        command_name = p.name[:-3]
+        log.debug('found command, `%s`', command_name)
+        m = importlib.import_module('tnb.command.%s' % command_name, package=command_name)
+        log.debug('command, `%s` imported', command_name)
+
+        commands[command_name] = dict(
+            name=command_name,
+            m=m,
+            a=getattr(m, 'subparser', None),
+            r=getattr(m, 'run', None)
+        )
+
+    return commands
+
+
+################################################################################
+# options
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '-verbose',
+    action='store_true',
+)
+parser.add_argument(
+    '-d',
+    dest='design_file',
+    help='specify network design file',
+)
+
+parser.add_argument(
+    '-save',
+    dest='save_directory',
+    help='specify save directory',
+)
+
+parser.add_argument(
+    '-tag',
+    action='append',
+    help='tags for this job',
+)
+
+subparsers = parser.add_subparsers(help='commands')
+
+default_tag = 'none'
+
+
+if __name__ == '__main__':
+    commands = load_commands()
+    for name, c in commands.items():
+        if c['a'] is not None:
+            c['a'](subparsers)
+
+    args = parser.parse_args()
+
+    args.now = datetime.datetime.now()
+
+    # tags
+    tags = None
+    if args.tag is None:
+        args.tag = list()
+
+    if len(args.tag) < 1:
+        tags = default_tag
+    else:
+        tags = '.'.join(sorted(args.tag))
+
+    args.tags = tags
+
+    if args.save_directory is None:
+        args.save_directory = '/tmp/stellar-nice-body/'
+
+    args.save_directory = pathlib.Path(args.save_directory).joinpath(args.tags).absolute()
+
+    if args.verbose:
+        logging.root.setLevel(logging.DEBUG)
+
+    log.debug('started')
+
+    log.debug('options:\n%s', pprint.pformat(args.__dict__))
+
+    design_file = None
+    if args.design_file is not None:
+        args.design_file = pathlib.Path(args.design_file)
+        log.debug('trying to load design file from `%s`', args.design_file.absolute())
+        design_path = pathlib.Path(args.design_file)
+        if not design_path.exists():
+            print_parser_error(parser, OSError('file not found in `%s`' % args.design_file))
+        design_file = design_path.read_text()
+
+    if design_file is None:
+        print_parser_error(parser, '`design file is missing`')
+
+    args.design = Design.from_string(design_file)
+
+    try:
+        args.command
+    except AttributeError:
+        print_parser_error(parser, 'command is missing')
+
+    exit_code = None
+    try:
+        exit_code = commands[args.command.replace('-', '_')]['r'](parser, args)
+    except KeyError as e:
+        if args.verbose:
+            traceback.print_exc()
+
+        print_parser_error(parser, 'command, `%s` has some problems: %s' % (args.command, e))
+    except Exception as e:
+        if args.verbose:
+            traceback.print_exc()
+
+        traceback.print_exc()
+        print_parser_error(parser, e)
+
+    if exit_code is None:
+        exit_code = 0
+
+    sys.exit(exit_code)
+
+# vim: set filetype=python:
+

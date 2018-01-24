@@ -1,0 +1,57 @@
+network:
+    base_safety: 0.7
+    minimum_common: 3
+trusted:
+    - s0n0
+    - s0n1
+    - s0n2
+    - s0n3
+instances:
+    server0:
+
+        internal_ip: 172.31.0.2
+        public_ip: 192.168.99.100
+
+        tags:
+            - ap-northeast-2
+            - 172.31.0.2
+
+        nodes:
+            - s0n0
+            - s0n1
+            - s0n2
+            - s0n3
+        trusted:
+databases:
+    default:
+        engine: postgresql
+        host: postgresql
+        port: 5432
+        user: dbuser
+        password: dbuser
+history:
+    trusted:
+        - s0n1
+
+    backend:
+        default:
+            getter: http://killme.s3-website.ap-northeast-2.amazonaws.com/dev/multi-quorum/{hostname}/{{0}} -O {{1}}
+            putter: aws s3 cp {{0}} s3://killme/local/intersection-with-observers/{hostname}/{{1}} --acl public-read --quiet'
+nodes:
+    s0n0:
+
+        secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+
+        is_validator: true
+
+        common:
+            - s1n0
+            - s2n2
+            - s3n3
+
+        database: replicated
+
+        history: default
+    s0n1:
+    s0n2:
+    s0n3:

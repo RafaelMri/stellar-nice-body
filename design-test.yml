@@ -1,0 +1,119 @@
+################################################################################
+# generated at 2017-08-28T20:19:10.395609 from 'spikeekips@bos.local'
+databases:
+  default:
+    engine: postgresql
+    host: postgresql
+    password: dbuser
+    port: 5432
+    user: dbuser
+history:
+  backends:
+    default:
+      getter: curl -s http://killme.s3-website.ap-northeast-2.amazonaws.com//{hostname}/{{0}} -O {{1}}
+      putter: aws s3 cp {{0}} s3://killme/local/intersection-with-observers/{hostname}/{{1}} --acl public-read --quiet'
+  trusted:
+  - s0n1
+  - s1n0
+  - s2n2
+  - s3n0
+instances:
+  server0:
+    internal_ip: 172.31.0.2
+    nodes:
+    - s0n0
+    - s0n1
+    - s0n2
+    - s0n3
+    public_ip: 192.168.99.100
+    tags:
+    - aws
+    - ap
+    - northeast
+    - 2
+    - 172
+    - 31
+  server1:
+    internal_ip: 172.31.0.3
+    nodes:
+    - s1n0
+    - s1n1
+    - s1n2
+    - s1n3
+    public_ip: 192.168.99.101
+    tags:
+    - aws
+    - ap
+    - northeast
+    - 2
+    - 172
+    - 31
+  server2:
+    internal_ip: 172.31.0.4
+    nodes:
+    - s2n0
+    - s2n1
+    - s2n2
+    - s2n3
+    public_ip: 192.168.99.102
+    tags:
+    - aws
+    - ap
+    - northeast
+    - 2
+    - 172
+    - 31
+  server3:
+    internal_ip: 172.31.0.5
+    nodes:
+    - s3n0
+    - s3n1
+    - s3n2
+    - s3n3
+    public_ip: 192.168.99.103
+    tags:
+    - aws
+    - ap
+    - northeast
+    - 2
+    - 172
+    - 31
+network:
+  base_safety: 0.7
+  passphrase: Test SDF Network ; September 2015
+nodes:
+  s0n0:
+    database: default
+    history: default
+    is_validator: true
+    secret_seed: SAPFLNCER52F3KDWQV3PXCIFVXC2SP7RA42ZF43LPCHDCRVLY7SOHEAS
+  s0n1:
+    secret_seed: SDYL4KOCAD6PBI4CREVTYIBPPWHMZQPMSWZXYQ23L43X3UG7VU5YWXSX
+  s0n2:
+    secret_seed: SAXDK72UINAX3DTXNLN3ULULNO3F6I5XQCOAAWLFKXXUZLZ4ZNVX5CUM
+  s0n3:
+    secret_seed: SDLJRUEHPQS72WRZQJ6QQSQYKUYIOM477MSBAPTZEVVGS22KUOUMLQZC
+  s1n0:
+    secret_seed: SA5DYWUGGMXNSGEY7IFL3RUOQYUBB4VBQSSREMTLMH4GYZRBMSKBXX5F
+  s1n1:
+    secret_seed: SCZFKDJS7KQL2RKZVPITE7K32XOKSODNHARCERZFEJTHD4FMOXBZ523P
+  s1n2:
+    secret_seed: SA55OP3HX7OTYQ2FO74LYEMWYR373LUEDGMUVZQ6CPMSHZLU2JFOLQTF
+  s1n3:
+    secret_seed: SCSE2TGV7AFSW5XOIRKVVB52P76TYLJY2N2CE46TLU7DXW3YNS3R3DFO
+  s2n0:
+    secret_seed: SASOXHTES34Y2HE5CX4FMV4CH2DK7TMU566KPMCLNC4ZNUDQNK65T3DT
+  s2n1:
+    secret_seed: SBOLG2Z76S3ZQMB5XFHPUZFURC5IBK3EXA7ECNHPT2SEN2TTRQF6LQD5
+  s2n2:
+    secret_seed: SCRTPOHY5FR7SK2HOSUXYZVHVPEPAP6CPWVUROTEKWANUPFGFWTWEBSF
+  s2n3:
+    secret_seed: SDZLGDD2AXGD66QPUO4X7CNU22CDZ3ZC6TAECF5SQXUCJSVHSCNRVA2D
+  s3n0:
+    secret_seed: SC27A6TOWRWX3Q7TBFF4FG6MFUXGPSGFAV5RT5LNPNMD5YWOFHMBBAFR
+  s3n1:
+    secret_seed: SDAWXJ5Q6CRCKHCGVROKT3MUOTKVISZR7CHZITQXRCHRH6Y6M7TEDMAQ
+  s3n2:
+    secret_seed: SAM2ZRVXA5XGYHK3EE6JV5JJAIFVECB3QXKNB5X5Q3PM7VSNM7JVOXYY
+  s3n3:
+    secret_seed: SC6EQY6HLTCYKEMNJZBS2DCMB4FZJBR62CRBE5LZIAVYUHUHO3CJSDDL
